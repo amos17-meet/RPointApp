@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RPoint</string>
+    <string name="title_activity_results">Results</string>
 </resources>
