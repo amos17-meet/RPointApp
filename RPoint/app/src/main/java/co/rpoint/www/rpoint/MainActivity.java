@@ -1,5 +1,6 @@
 package co.rpoint.www.rpoint;
 
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
@@ -20,6 +21,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,12 +56,24 @@ public class MainActivity extends Activity {
     private Button serialNumberButton;
     private Button useCountButton;
     private Context mContext;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // User is signed in
+        } else {
+            mAuth.signInWithEmailAndPassword("Georgesarji@gmail.com", "Georgeis1");
+            // No user is signed in
+        }
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("message");
 
+        myRef.setValue("Hello, World!");
         this.statusMessageTextView = (TextView)this.findViewById(R.id.status_message_text_view_id);
         this.batteryLevelTextView = (TextView)this.findViewById(R.id.battery_level_text_view_id);
 
@@ -100,7 +118,7 @@ public class MainActivity extends Activity {
 
     public void connectNearestClicked(View v) {
         if (mAPI != null) {
-            setStatus(R.string.TEXT_CONNECTING);
+            setStatus("Connecting");
             // Here, thisActivity is the current activity
             if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                     && ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -218,7 +236,7 @@ public class MainActivity extends Activity {
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             mAPI.disconnect();
-                            setStatus(R.string.TEXT_DISCONNECTED);
+                            setStatus("Disconnected");
                             dialog.cancel();
                         }
                     });
@@ -243,17 +261,17 @@ public class MainActivity extends Activity {
 
         @Override
         public void BACtrackConnected(BACTrackDeviceType bacTrackDeviceType) {
-            setStatus(R.string.TEXT_CONNECTED);
+            setStatus("Connected");
         }
 
         @Override
         public void BACtrackDidConnect(String s) {
-            setStatus(R.string.TEXT_DISCOVERING_SERVICES);
+            setStatus("Discovering service");
         }
 
         @Override
         public void BACtrackDisconnected() {
-            setStatus(R.string.TEXT_DISCONNECTED);
+            setStatus("Disconnected");
             setBatteryStatus("");
             setCurrentFirmware(null);
         }
@@ -269,44 +287,44 @@ public class MainActivity extends Activity {
 
         @Override
         public void BACtrackCountdown(int currentCountdownCount) {
-            setStatus(getString(R.string.TEXT_COUNTDOWN) + " " + currentCountdownCount);
+            setStatus("Countdown:" + " " + currentCountdownCount);
         }
 
         @Override
         public void BACtrackStart() {
-            setStatus(R.string.TEXT_BLOW_NOW);
+            setStatus("Blow now");
         }
 
         @Override
         public void BACtrackBlow() {
-            setStatus(R.string.TEXT_KEEP_BLOWING);
+            setStatus("Keep blowing!");
         }
 
         @Override
         public void BACtrackAnalyzing() {
-            setStatus(R.string.TEXT_ANALYZING);
+            setStatus("Analyzing");
         }
 
         @Override
         public void BACtrackResults(float measuredBac) {
-            setStatus(getString(R.string.TEXT_FINISHED) + " " + measuredBac);
+            setStatus("Finished! Result" + " " + measuredBac);
         }
 
         @Override
         public void BACtrackFirmwareVersion(String version) {
-            setStatus(getString(R.string.TEXT_FIRMWARE_VERSION) + " " + version);
+            setStatus("Firmware version:" + " " + version);
             setCurrentFirmware(version);
         }
 
         @Override
         public void BACtrackSerial(String serialHex) {
-            setStatus(getString(R.string.TEXT_SERIAL_NUMBER) + " " + serialHex);
+            setStatus("Serial number:" + " " + serialHex);
         }
 
         @Override
         public void BACtrackUseCount(int useCount) {
             Log.d(TAG, "UseCount: " + useCount);
-            setStatus(getString(R.string.TEXT_USE_COUNT) + " " + useCount);
+            setStatus("Use count:" + " " + useCount);
         }
 
         @Override
@@ -316,14 +334,14 @@ public class MainActivity extends Activity {
 
         @Override
         public void BACtrackBatteryLevel(int level) {
-            setBatteryStatus(getString(R.string.TEXT_BATTERY_LEVEL) + " " + level);
+            setBatteryStatus("Battery level:" + " " + level);
 
         }
 
         @Override
         public void BACtrackError(int errorCode) {
             if (errorCode == Errors.ERROR_BLOW_ERROR)
-                setStatus(R.string.TEXT_ERR_BLOW_ERROR);
+                setStatus("Error: Blow process failed");
         }
     };
 
