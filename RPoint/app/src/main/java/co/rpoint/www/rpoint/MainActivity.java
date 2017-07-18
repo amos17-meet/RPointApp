@@ -66,59 +66,65 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mAuth = FirebaseAuth.getInstance();
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
-        startActivity(browserIntent);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // User is signed in
-        } else {
-            mAuth.signInWithEmailAndPassword("Georgesarji@gmail.com", "Georgeis1");
-            // No user is signed in
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser User = mAuth.getCurrentUser();
+        if (User == null) {
+            // User is not logged in; forward to Login page.
+            Intent Login = new Intent(MainActivity.this, Login.class);
+            startActivity(Login);
         }
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference CountRef = database.getReference("Tests/Count");
-        CountRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //Reached
-                System.out.print("It works...");
-                int Count = Integer.parseInt(dataSnapshot.getValue(String.class));
-                Log.d(TAG, "Value is: "+Count);
-                //FirebaseDatabase.getInstance().getReference("Tests/Count").setValue("15");
+        else {
+            // User is logged in and app is authenticated; continue on.
+            setContentView(R.layout.activity_main);
+            mAuth = FirebaseAuth.getInstance();
+            // Following 2 lines are for browsing the web
+            // Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+            // startActivity(browserIntent);
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference CountRef = database.getReference("Tests/Count");
+            CountRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    //Reached
+                    System.out.print("It works...");
+                    int Count = Integer.parseInt(dataSnapshot.getValue(String.class));
+                    Log.d(TAG, "Value is: " + Count);
+                    //FirebaseDatabase.getInstance().getReference("Tests/Count").setValue("15");
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            this.statusMessageTextView = (TextView) this.findViewById(R.id.status_message_text_view_id);
+            this.batteryLevelTextView = (TextView) this.findViewById(R.id.battery_level_text_view_id);
+
+            this.setStatus("Disconnected");
+
+            this.serialNumberButton = (Button) findViewById(R.id.get_serial_number_button_id);
+            this.useCountButton = (Button) findViewById(R.id.get_use_count_button_id);
+
+            String apiKey = "176cb3af68604c13bb02b04e376aba";
+
+            try {
+                mAPI = new BACtrackAPI(this, mCallbacks, apiKey);
+                mContext = this;
+            } catch (BluetoothLENotSupportedException e) {
+                e.printStackTrace();
+                this.setStatus("Bluetooth LE is not supported.");
+            } catch (BluetoothNotEnabledException e) {
+                e.printStackTrace();
+                this.setStatus("Bluetooth is not enabled.");
+            } catch (LocationServicesNotEnabledException e) {
+                e.printStackTrace();
+                this.setStatus("Location is not enabled.");
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        this.statusMessageTextView = (TextView)this.findViewById(R.id.status_message_text_view_id);
-        this.batteryLevelTextView = (TextView)this.findViewById(R.id.battery_level_text_view_id);
-
-        this.setStatus("Disconnected");
-
-        this.serialNumberButton = (Button) findViewById(R.id.get_serial_number_button_id);
-        this.useCountButton = (Button) findViewById(R.id.get_use_count_button_id);
-
-        String apiKey = "176cb3af68604c13bb02b04e376aba";
-
-        try {
-            mAPI = new BACtrackAPI(this, mCallbacks, apiKey);
-            mContext = this;
-        } catch (BluetoothLENotSupportedException e) {
-            e.printStackTrace();
-            this.setStatus("Bluetooth LE is not supported.");
-        } catch (BluetoothNotEnabledException e) {
-            e.printStackTrace();
-            this.setStatus("Bluetooth is not enabled.");
-        } catch (LocationServicesNotEnabledException e) {
-            e.printStackTrace();
-            this.setStatus("Location is not enabled.");
         }
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
