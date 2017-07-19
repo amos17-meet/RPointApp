@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "425524786368",
+    "firebase_url": "https://rpoint-22019.firebaseio.com",
+    "project_id": "rpoint-22019",
+    "storage_bucket": "rpoint-22019.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425524786368:android:e1540a8bf06746d0",
+        "android_client_info": {
+          "package_name": "com.rpoint.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425524786368-l8hr5t6geikbvt3cdtb3opacji5llfr5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyLaSo4SeuY5l6DpNyPtbzGEADtpbNizs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:425524786368:android:04a9c6170580e6cd",
+        "android_client_info": {
+          "package_name": "co.rpoint.www.rpoint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "425524786368-l9qjmstvd0kk8pe9hqp30gt24h93aoi3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "co.rpoint.www.rpoint",
+            "certificate_hash": "0488d57a4bfd2401572d23fd58ba47a8ac6b59f5"
+          }
+        },
+        {
+          "client_id": "425524786368-l8hr5t6geikbvt3cdtb3opacji5llfr5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCyLaSo4SeuY5l6DpNyPtbzGEADtpbNizs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "425524786368-l8hr5t6geikbvt3cdtb3opacji5llfr5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
