@@ -30,6 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
+
 import BACtrackAPI.API.BACtrackAPI;
 import BACtrackAPI.API.BACtrackAPICallbacks;
 import BACtrackAPI.Constants.BACTrackDeviceType;
@@ -71,7 +73,20 @@ public class Connect extends AppCompatActivity {
             this.setStatus("Location is not enabled.");
         }
 
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        mDatabase.getReference().child("Tests").child("Count").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.e("Test ", dataSnapshot.getValue()+"");
+                Log.e("My count ", ""+Count);
+                Count=Integer.parseInt(dataSnapshot.getValue().toString());
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
     public void SetConnected()
     {
@@ -176,23 +191,10 @@ public class Connect extends AppCompatActivity {
             setStatus("Results:" + " " + measuredBac);
             FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-            mDatabase.getReference("Tests").child("Count").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Count=Integer.parseInt(dataSnapshot.getValue().toString());
-                    Log.e(TAG, ""+Count);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-            DatabaseReference mTestReference = mDatabase.getReference("Tests/"+Count);
-            mTestReference.child("BAC").setValue(measuredBac);
-            Count++;
-            mDatabase.getReference("Tests").child("Count").setValue(Count);
-
+            Test CurrentTest = new Test(Count, measuredBac);
+            AddTest(CurrentTest);
+            UpdateCount(Count);
+            Count+=1;
 
             Log.e(TAG, "Results are "+measuredBac);
 
@@ -286,6 +288,19 @@ public class Connect extends AppCompatActivity {
 
             }
         }
+    }
+
+    private void AddTest(Test test)
+    {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Tests").child(test.GetId()+"").setValue(test);
+    }
+
+    private void UpdateCount(int Count)
+    {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Count+=1;
+        mDatabase.child("Tests").child("Count").setValue(Count);
     }
 
     private class APIKeyVerificationAlert extends AsyncTask<String, Void, String> {
