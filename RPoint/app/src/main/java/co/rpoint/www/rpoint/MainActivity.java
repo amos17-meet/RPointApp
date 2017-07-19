@@ -83,23 +83,23 @@ public class MainActivity extends Activity {
             // Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
             // startActivity(browserIntent);
 
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference CountRef = database.getReference("Tests/Count");
-            CountRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    //Reached
-                    System.out.print("It works...");
-                    int Count = Integer.parseInt(dataSnapshot.getValue(String.class));
-                    Log.d(TAG, "Value is: " + Count);
-                    //FirebaseDatabase.getInstance().getReference("Tests/Count").setValue("15");
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            DatabaseReference CountRef = database.getReference("Tests/Count");
+//            CountRef.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    //Reached
+//                    System.out.print("It works...");
+//                    int Count = Integer.parseInt(dataSnapshot.getValue(String.class));
+//                    Log.d(TAG, "Value is: " + Count);
+//                    //FirebaseDatabase.getInstance().getReference("Tests/Count").setValue("15");
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
 
 
 

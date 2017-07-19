@@ -22,6 +22,11 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
@@ -43,6 +48,7 @@ public class Connect extends AppCompatActivity {
     public TextView statusMessageTextView;
     private static String TAG = "MainActivity";
     private static final byte PERMISSIONS_FOR_SCAN = 100;
+    protected int Count;
 
 
     @Override
@@ -119,7 +125,6 @@ public class Connect extends AppCompatActivity {
         @Override
         public void BACtrackDidConnect(String s) {
             setStatus("Discovering Services");
-            SetConnected();
         }
 
         @Override
@@ -128,8 +133,8 @@ public class Connect extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    setContentView(R.layout.activity_connect);
-                    statusMessageTextView=(TextView)findViewById(R.id.status_message_text_view_id);
+                    //setContentView(R.layout.activity_connect);
+                    //statusMessageTextView=(TextView)findViewById(R.id.status_message_text_view_id);
 //stuff that updates ui
 
                 }
@@ -169,6 +174,28 @@ public class Connect extends AppCompatActivity {
         @Override
         public void BACtrackResults(float measuredBac) {
             setStatus("Results:" + " " + measuredBac);
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+            mDatabase.getReference("Tests").child("Count").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Count=Integer.parseInt(dataSnapshot.getValue().toString());
+                    Log.e(TAG, ""+Count);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            DatabaseReference mTestReference = mDatabase.getReference("Tests/"+Count);
+            mTestReference.child("BAC").setValue(measuredBac);
+            Count++;
+            mDatabase.getReference("Tests").child("Count").setValue(Count);
+
+
+            Log.e(TAG, "Results are "+measuredBac);
+
         }
 
         @Override
