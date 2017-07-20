@@ -47,8 +47,8 @@ public class Login extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     // User is logged in successfully.
                     // Forward user to MainActivity (Home page)
-                    Intent Main = new Intent(Login.this, MainActivity.class);
-                    startActivity(Main);
+                    Intent ConnectPage = new Intent(Login.this, Connect.class);
+                    startActivity(ConnectPage);
 
                 } else {
                     // User did not log in.

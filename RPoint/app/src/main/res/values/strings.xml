@@ -1,4 +1,19 @@
 <resources>
+
+    <string-array name="times_array">
+        <item>Once</item>
+        <item>Twice</item>
+        <item>three or four times</item>
+        <item>five or six times</item>
+    </string-array>
+
+    <string-array name="over_time_array">
+        <item>day</item>
+        <item>week</item>
+        <item>month</item>
+        <item>year</item>
+    </string-array>
+
     <string name="app_name">RPoint</string>
     <string name="title_activity_results">Results</string>
     <string name="title_activity_firebase_login">Firebase Log in</string>

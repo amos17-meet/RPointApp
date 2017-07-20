@@ -45,7 +45,7 @@ import static android.R.attr.apiKey;
 public class Connect extends AppCompatActivity {
 
     private static BACtrackAPI mAPI;
-    protected boolean Connected;
+    protected static boolean Connected;
     private Context mContext;
     public TextView statusMessageTextView;
     private static String TAG = "MainActivity";
@@ -56,52 +56,58 @@ public class Connect extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_connect);
-        statusMessageTextView = (TextView) findViewById(R.id.status_message_text_view_id);
-        String apiKey = "176cb3af68604c13bb02b04e376aba";
-        try {
-            mAPI = new BACtrackAPI(this, mCallbacks, apiKey);
-            mContext = this;
-        } catch (BluetoothLENotSupportedException e) {
-            e.printStackTrace();
-            this.setStatus("Bluetooth LE is not supported.");
-        } catch (BluetoothNotEnabledException e) {
-            e.printStackTrace();
-            this.setStatus("Bluetooth is not enabled.");
-        } catch (LocationServicesNotEnabledException e) {
-            e.printStackTrace();
-            this.setStatus("Location is not enabled.");
+        if (MainActivity.Connected==true) {
+            setContentView(R.layout.test);
+            statusMessageTextView = (TextView) findViewById(R.id.test_view);
+        } else {
+            setContentView(R.layout.activity_connect);
+            statusMessageTextView = (TextView) findViewById(R.id.status_message_text_view_id);
+            String apiKey = "176cb3af68604c13bb02b04e376aba";
+            try {
+                mAPI = new BACtrackAPI(this, mCallbacks, apiKey);
+                mContext = this;
+            } catch (BluetoothLENotSupportedException e) {
+                e.printStackTrace();
+                this.setStatus("Bluetooth LE is not supported.");
+            } catch (BluetoothNotEnabledException e) {
+                e.printStackTrace();
+                this.setStatus("Bluetooth is not enabled.");
+            } catch (LocationServicesNotEnabledException e) {
+                e.printStackTrace();
+                this.setStatus("Location is not enabled.");
+            }
+
+            FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+            mDatabase.getReference().child("Tests").child("Count").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.e("Test ", dataSnapshot.getValue() + "");
+                    Log.e("My count ", "" + Count);
+                    Count = Integer.parseInt(dataSnapshot.getValue().toString());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
-
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        mDatabase.getReference().child("Tests").child("Count").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e("Test ", dataSnapshot.getValue()+"");
-                Log.e("My count ", ""+Count);
-                Count=Integer.parseInt(dataSnapshot.getValue().toString());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
     public void SetConnected()
     {
         Connected=true;
 //        Intent TestPage = new Intent(Connect.this, Test.class);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                setContentView(R.layout.test);
-                statusMessageTextView=(TextView)findViewById(R.id.test_view);
-//stuff that updates ui
-
-            }
-        });
-
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                setContentView(R.layout.test);
+//                statusMessageTextView=(TextView)findViewById(R.id.test_view);
+////stuff that updates ui
+//
+//            }
+//        });
+            Intent InputsPage = new Intent(Connect.this, MainActivity.class);
+        startActivity(InputsPage);
 
     }
 
@@ -191,7 +197,7 @@ public class Connect extends AppCompatActivity {
             setStatus("Results:" + " " + measuredBac);
             FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-            Test CurrentTest = new Test(Count, measuredBac);
+            Test CurrentTest = new Test(Count, measuredBac, MainActivity.age, MainActivity.weight, MainActivity.gender, MainActivity.freq);
             AddTest(CurrentTest);
             UpdateCount(Count);
             Count+=1;
